@@ -14,6 +14,14 @@ public class PlayerController : MonoBehaviour
     {
         // On récupère le Rigidbody2D attaché à l'objet du joueur
         rb = GetComponent<Rigidbody2D>();
+
+        // pour faire spawn le joueur sur la map
+        GameObject spawn = GameObject.Find("SpawnPoint");
+        if (spawn != null)
+        {
+            transform.position = spawn.transform.position;
+        }
+
     }
 
     private void Update()
@@ -24,6 +32,10 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.linearVelocity = movementDirection * moveSpeed; // multiplication de la direction par la vitesse choisie
+        if ( rb != null)
+        {
+            rb.linearVelocity = movementDirection * moveSpeed; // multiplication de la direction par la vitesse choisie
+        }
+        
     }
 }
