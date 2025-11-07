@@ -1771,7 +1771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6bdb0b56685fbf43b1f3021e6f20cf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterRise
-  riseDuration: 10
+  riseDuration: 9
   riseHeight: 10.5
   gameOverUI: {fileID: 1794750051}
 --- !u!61 &438579621
@@ -3951,7 +3951,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneFader
   fadeCanvasGroup: {fileID: 1075790110}
-  fadeDuration: 2
+  fadeDuration: 0
 --- !u!114 &1436686259
 MonoBehaviour:
   m_ObjectHideFlags: 0

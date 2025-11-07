@@ -49,13 +49,25 @@ public class SceneFader : MonoBehaviour
 
     public void FadeToNextLevel(string sceneName)
     {
+        // Stoppe l'eau avant de changer de scène
+        WaterRise water = FindFirstObjectByType<WaterRise>();
+        if (water != null)
+        {
+            water.StopWater();
+        }
+
         StartCoroutine(FadeOut(sceneName));
     }
 
     // --- Méthode utilisée par le menu principal ---
     public void FadeToScene(string sceneName)
     {
-        // Cette méthode est appelée par le bouton "Jouer"
+        WaterRise water = FindFirstObjectByType<WaterRise>();
+        if (water != null)
+        {
+            water.StopWater();
+        }
+
         StartCoroutine(FadeOut(sceneName));
     }
 

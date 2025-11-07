@@ -4,49 +4,42 @@ using UnityEngine.SceneManagement;
 public class WaterRise : MonoBehaviour
 {
     [Header("Réglages")]
-    [SerializeField] private float riseDuration = 10f;
-    [SerializeField] private float riseHeight = 6f;
-    [SerializeField] private GameObject gameOverUI;
+    [SerializeField] private float riseDuration = 10f; // Temps avant que l'eau atteigne le haut
+    [SerializeField] private float riseHeight = 6f;   // Hauteur totale à parcourir
+    [SerializeField] private GameObject gameOverUI;    // Popup Game Over
 
     private Vector3 startPosition;
     private Vector3 endPosition;
     private float elapsedTime = 0f;
     private bool hasLost = false;
     private bool hasStarted = false;
+    private bool levelFinished = false; // ← Nouvelle variable pour stopper l'eau
 
-    void Awake()
+    void Start()
     {
         startPosition = transform.position;
-        endPosition = startPosition + Vector3.up * riseHeight;
-    }
-
-    void OnEnable()
-    {
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
-        ResetWater();
-    }
-
-    void OnDisable()
-    {
-        SceneManager.sceneUnloaded -= OnSceneUnloaded;
-    }
-
-    private void OnSceneUnloaded(Scene scene)
-    {
-        // Stopper l'eau quand la scène est quittée
-        hasStarted = false;
+        endPosition = new Vector3(startPosition.x, startPosition.y + riseHeight, startPosition.z);
     }
 
     void Update()
     {
-        if (!hasStarted || hasLost) return;
+        // L’eau monte seulement si le niveau a commencé, n’est pas perdu et pas fini
+        if (!hasStarted || hasLost || levelFinished) return;
 
-        elapsedTime += Time.unscaledDeltaTime;
+        elapsedTime += Time.deltaTime;
         float t = Mathf.Clamp01(elapsedTime / riseDuration);
+
         transform.position = Vector3.Lerp(startPosition, endPosition, t);
 
+        // Si l'eau atteint le sommet alors Game Over automatique
         if (t >= 1f && !hasLost)
-            TriggerGameOver("l’eau a submergé tout le niveau !");
+        {
+            hasLost = true;
+            Debug.Log("Game Over : l’eau a submergé tout le niveau !");
+            if (gameOverUI != null)
+                gameOverUI.SetActive(true);
+            PauseGame();
+        }
     }
 
     public void StartWaterRise()
@@ -57,15 +50,13 @@ public class WaterRise : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") && !hasLost)
-            TriggerGameOver("le joueur a touché l’eau !");
-    }
-
-    private void TriggerGameOver(string reason)
-    {
-        hasLost = true;
-        Debug.Log("Game Over : " + reason);
-        if (gameOverUI != null) gameOverUI.SetActive(true);
-        PauseGame();
+        {
+            hasLost = true;
+            Debug.Log("Game Over : le joueur a touché l’eau !");
+            if (gameOverUI != null)
+                gameOverUI.SetActive(true);
+            PauseGame();
+        }
     }
 
     private void PauseGame()
@@ -85,22 +76,28 @@ public class WaterRise : MonoBehaviour
                 rb.constraints = RigidbodyConstraints2D.FreezeAll;
             }
         }
+
+        Debug.Log("Jeu mis en pause après Game Over");
     }
 
+    // Bouton "Relancer"
     public void RetryLevel()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    private void ResetWater()
+    // Appelle cette fonction quand tu finis le niveau
+    public void FinishLevel()
     {
-        elapsedTime = 0f;
-        hasLost = false;
-        hasStarted = false;
-        transform.position = startPosition;
+        levelFinished = true;
+        Debug.Log("Niveau terminé : l’eau s’arrête !");
+    }
 
-        if (gameOverUI != null)
-            gameOverUI.SetActive(false);
+    public void StopWater()
+    {
+        hasStarted = false;
+        levelFinished = true;
+        Debug.Log("Eau stoppée définitivement !");
     }
 }
