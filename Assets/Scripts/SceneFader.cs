@@ -25,6 +25,13 @@ public class SceneFader : MonoBehaviour
             yield return null;
         }
         fadeCanvasGroup.alpha = 0;
+
+        // Une fois le fondu terminé, on démarre l’eau
+        WaterRise water = FindFirstObjectByType<WaterRise>();
+        if (water != null)
+        {
+            water.StartWaterRise();
+        }
     }
 
     public IEnumerator FadeOut(string sceneToLoad)

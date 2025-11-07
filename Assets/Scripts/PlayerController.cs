@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 2f; // Vitesse de déplacement du joueur
+    [SerializeField] private float moveSpeed = 5f; // Vitesse de déplacement du joueur
     private Rigidbody2D rb;
     private Vector2 movementDirection;     // Direction du mouvement selon les entrées clavier
 
